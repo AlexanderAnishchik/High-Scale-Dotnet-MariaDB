@@ -1,0 +1,123 @@
+version: '3.4'
+
+services:
+  webservice:
+    image: 'sanyaaxel/shardingproj:latest'   
+    deploy:
+      replicas: 2
+    depends_on:
+      - mariadb-shard1-master
+      - mariadb-shard2-master
+    environment:
+      - MasterPostDbConnectionStrings__Shard1=server=mariadb-shard1-master; port=3306; database=replDB; user=root; password=123987; Persist Security Info=False; Connect Timeout=300  
+      - MasterPostDbConnectionStrings__Shard2=server=mariadb-shard2-master; port=3306; database=replDB; user=root; password=123987; Persist Security Info=False; Connect Timeout=300  
+      - ReplicaPostDbConnectionStrings__Shard1=server=mariadb-shard1-slave; port=3306; database=replDB; user=root; password=123987; Persist Security Info=False; Connect Timeout=300  
+      - ReplicaPostDbConnectionStrings__Shard2=server=mariadb-shard2-slave; port=3306; database=replDB; user=root; password=123987; Persist Security Info=False; Connect Timeout=300   
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - webservice
+    ports:
+      - "5001:5001"
+  mariadb-shard1-master:
+    container_name: mariadb-shard1-master
+    image: docker.io/bitnami/mariadb:10.9
+    ports:
+      - '3311:3306'
+    volumes:
+      - 'mariadb_data:/bitnami/mariadb'
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=master
+      - MARIADB_REPLICATION_PASSWORD=12345
+      - MARIADB_ROOT_PASSWORD=123987
+      - MARIADB_USER=myusr
+      - MARIADB_PASSWORD=mypwd
+      - MARIADB_DATABASE=replDB
+    healthcheck:
+      test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+      interval: 15s
+      timeout: 5s
+      retries: 6
+
+  mariadb-shard1-slave:
+    container_name:  mariadb-shard1-slave
+    image: docker.io/bitnami/mariadb:10.9
+    depends_on:
+      - mariadb-shard1-master
+    ports:
+      - '3312:3306'
+    volumes:
+      - 'mariadb_data2:/bitnami/mariadb'
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=master
+      - MARIADB_REPLICATION_PASSWORD=12345
+      - MARIADB_ROOT_PASSWORD=123987
+      - MARIADB_MASTER_HOST=mariadb-shard1-master
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_USER=root
+      - MARIADB_MASTER_ROOT_PASSWORD=123987
+    healthcheck:
+      test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+      interval: 15s
+      timeout: 5s
+      retries: 6  
+
+  mariadb-shard2-master:
+    container_name: mariadb-shard2-master
+    image: docker.io/bitnami/mariadb:10.9
+    ports:
+      - '3411:3306'
+    volumes:
+      - 'mariadb_data3:/bitnami/mariadb'
+    environment:
+      - MARIADB_REPLICATION_MODE=master
+      - MARIADB_REPLICATION_USER=master
+      - MARIADB_REPLICATION_PASSWORD=12345
+      - MARIADB_ROOT_PASSWORD=123987
+      - MARIADB_USER=myusr
+      - MARIADB_PASSWORD=mypwd
+      - MARIADB_DATABASE=replDB
+    healthcheck:
+      test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      
+  mariadb-shard2-slave:
+    container_name:  mariadb-shard2-slave
+    image: docker.io/bitnami/mariadb:10.9
+    depends_on:
+      - mariadb-shard2-master
+    ports:
+      - '3412:3306'
+    volumes:
+      - 'mariadb_data4:/bitnami/mariadb'
+    environment:
+      - MARIADB_REPLICATION_MODE=slave
+      - MARIADB_REPLICATION_USER=master
+      - MARIADB_REPLICATION_PASSWORD=12345
+      - MARIADB_ROOT_PASSWORD=123987
+      - MARIADB_MASTER_HOST=mariadb-shard2-master
+      - MARIADB_MASTER_PORT_NUMBER=3306
+      - MARIADB_MASTER_ROOT_USER=root
+      - MARIADB_MASTER_ROOT_PASSWORD=123987
+    healthcheck:
+      test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+      interval: 15s
+      timeout: 5s
+      retries: 6  
+
+volumes:
+  mariadb_data:
+    driver: local
+  mariadb_data2:
+    driver: local
+  mariadb_data3:
+    driver: local
+  mariadb_data4:
+    driver: local
+

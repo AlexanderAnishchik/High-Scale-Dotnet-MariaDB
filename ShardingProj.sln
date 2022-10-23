@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32804.467
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShardingProj", "ShardingProj\ShardingProj.csproj", "{311B35DC-9EB8-44C0-85BA-389A9F3CD903}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DockerCompose", "DockerCompose", "{5DEB9AD7-44DB-48EA-9649-075A6A23AFBB}"
+	ProjectSection(SolutionItems) = preProject
+		DockerCompose\docker-compose.yml = DockerCompose\docker-compose.yml
+		DockerCompose\nginx.conf = DockerCompose\nginx.conf
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{311B35DC-9EB8-44C0-85BA-389A9F3CD903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{311B35DC-9EB8-44C0-85BA-389A9F3CD903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{311B35DC-9EB8-44C0-85BA-389A9F3CD903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{311B35DC-9EB8-44C0-85BA-389A9F3CD903}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DEA0D85D-DD09-456A-8C31-883AA2FB6245}
+	EndGlobalSection
+EndGlobal
